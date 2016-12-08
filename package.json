@@ -1,0 +1,14 @@
+{
+  "name": "Twitter2Excel",
+  "version": "0.0.7",
+  "scripts": {},
+  "description": "A simple Twitter scraper that saves results into an Excel file ",
+  "author": "Erik Hekman",
+  "license": "MIT",
+  "dependencies": {
+    "fs": "latest",
+    "json2xls": "latest",
+    "twitter": "latest",
+    "querystring":"latest"
+  }
+}
