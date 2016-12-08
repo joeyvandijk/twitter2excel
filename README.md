@@ -1,4 +1,4 @@
-# twitter
+# twitter2excel
 A simple Twitter scraper that saves results into an Excel file
 
 ### explanation
