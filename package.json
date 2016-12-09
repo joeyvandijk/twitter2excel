@@ -4,11 +4,12 @@
   "scripts": {},
   "description": "A simple Twitter scraper that saves results into an Excel file ",
   "author": "Erik Hekman",
+  "engines" : {
+    "node" : ">=4"
+  },
   "license": "MIT",
   "dependencies": {
-    "fs": "latest",
-    "json2xls": "latest",
-    "twitter": "latest",
-    "querystring":"latest"
+    "json2xls": "^0.1.2",
+    "twitter": "^1.5.0"
   }
 }

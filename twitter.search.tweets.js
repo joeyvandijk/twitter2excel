@@ -1,7 +1,6 @@
-var Twitter = require('twitter');
 var fs = require('fs');
+var Twitter = require('twitter');
 var json2xls = require('json2xls');
-var qs = require('querystring');
 
 var t = new Twitter({
   consumer_key: '',
@@ -19,14 +18,19 @@ var prev_max_id = null;
 
 // function to get Tweets of a specific user
 function searchTweets(params){
-  // call statuses/user_timeline
+  // call tweets with a certain keyword
   t.get('search/tweets', params, function(error, tweets, response) {
+    console.log(tweets);
+    if (tweets.errors && tweets.errors.length > 0) {
+      console.error('Something went wrong: ', tweets.errors.length === 1 ? tweets.errors[0] : tweets.errors);
+      return;
+    }
 
     console.log('Retrieved ' + tweets.statuses.length + ' Tweets')
     // checks if this is the first call or the n-th call
     // if this is for example the second call ommit the first tweet
     // this prevents duplicate tweets
-    for(i = (max_id == null) ? 0:1; i<tweets.statuses.length; i++){
+    for(var i = (max_id == null) ? 0 : 1; i < tweets.statuses.length; i++){
       // temporary save the returned tweets in an array
       // one option is to push every single tweet in an array (as we are doing now)
       // the advantage of this is that you can format the tweet e.g., remove elements
@@ -35,8 +39,12 @@ function searchTweets(params){
     }
 
     // get the max_id from the search_metadata.next_results
-    var next_results = tweets.search_metadata.next_results.replace('?', '').split('&');
-    var max_id = next_results[0].replace('max_id=', '');
+    var next_results;
+    var max_id;
+    if (tweets.search_metadata.search_metadata) {
+      next_results = tweets.search_metadata.next_results.replace('?', '').split('&');
+      max_id = next_results[0].replace('max_id=', '');
+    }
 
     // check if max_id is set and check prev_max_id is different from max_id
     // this prevents the script to run forever
@@ -71,14 +79,17 @@ function searchTweets(params){
   });
 }
 
-// screename to scrape taken from the CLI input
-var q = process.argv[2];
+if (process.argv.length !== 3) {
+  console.error('Please provide a screenname to scrape like `node twitter.get.tweets.js yourName`');
+} else {
+  var q = process.argv[2];
 
-// amount of tweets. 100 is the max
-var count = 100;
+  // set of parameters
+  var params = {
+    q: q, // screenname to scrape taken from the CLI input
+    count: 100 // amount of tweets. 200 is the max
+  };
 
-// set of parameters
-var params = {q: q, count: count};
-
-// call the function
-searchTweets(params);
+  // call the function
+  searchTweets(params);
+}
