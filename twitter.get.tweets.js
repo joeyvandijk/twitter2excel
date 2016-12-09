@@ -57,7 +57,13 @@ function getTweets(params){
       // there are no more tweets to collect
       // use json2xls to create Excel object
       var xls = json2xls(allTweets);
-      var dt = new Date().toISOString().replace('T', '_').substr(0, 19);
+
+      // create a datetime stamp to include to the filename
+      var now = new Date().getTime();
+      now += (60*60*1000);
+      now = new Date(now);
+      now = now.toISOString().replace('T', '@').substr(0, 19).replace(/:/g,"_");
+
       // create filename ... needs datetime
       var file = screen_name + '_' + dt + '.xlsx';
 
