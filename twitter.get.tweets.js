@@ -34,37 +34,38 @@ function getTweets(params){
     }
 
     // get the id of the last tweet
-    max_id = tweets[tweets.length-1].id;
+    if(tweets.length > 0){
+      max_id = tweets[tweets.length-1].id;
 
-    // check if max_id is set and check prev_max_id is different from max_id
-    // this prevents the script to run forever
-    if(max_id != null && max_id != prev_max_id){
-      // set the prev_max_id
-      prev_max_id = max_id;
+      // check if max_id is set and check prev_max_id is different from max_id
+      // this prevents the script to run forever
+      if(max_id != null && max_id != prev_max_id){
+        // set the prev_max_id
+        prev_max_id = max_id;
 
-      // create new set of parameters
-      var params = {screen_name: screen_name, count: count, trim_user: true, max_id: max_id};
+        // create new set of parameters
+        params.max_id = max_id;
 
-      // call this function again with
-      // wait 2 seconds to stay within the api call rate
-      // this could be done better
-      setTimeout(function() {
-        getTweets(params);
-      }, 2000);
-
+        // call this function again with
+        // wait 2 seconds to stay within the api call rate
+        // this could be done better
+        setTimeout(function() {
+          getTweets(params);
+        }, 2000);
+      }
     } else {
       // there are no more tweets to collect
-      // use json2xls lin to create Excel object
+      // use json2xls to create Excel object
       var xls = json2xls(allTweets);
-
-      // create filename
-      var file = screen_name + '.xlsx';
+      var dt = new Date().toISOString().replace('T', '_').substr(0, 19);
+      // create filename ... needs datetime
+      var file = screen_name + '_' + dt + '.xlsx';
 
       // write results to file
       fs.writeFileSync(file, xls, 'binary');
 
       // inform the user that the task is done
-      console.log('Done collecting tweets. Saving results to '+screen_name+ '.xlsx');
+      console.log('Done collecting tweets. Saving results to ' + file);
     }
   });
 }
